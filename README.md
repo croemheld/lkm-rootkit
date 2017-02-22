@@ -99,7 +99,7 @@ showport-12345
 ```
 
 ### Privilege escalation
-> Node: This functionality is still buggy. Please be careful with your machine when escalating a process.
+> Note: This functionality is still buggy. Please be careful with your machine when escalating a process.
 Escalating a process privileges to root and also make this process adopted by the init process. To escalate a process to root, send the command `escalate` along with the PID of the process to your rootkit:
 ```
 escalate-12345
