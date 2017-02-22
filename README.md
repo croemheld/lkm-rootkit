@@ -18,7 +18,8 @@ To compile this module, just run the Makefile with the `make` command in your te
 ### Install
 Kernel modules are installed using the `insmod` command. In this project we also install two other modules (`nf_reject_ipv4` and `nf_reject_ipv6`) which are neccessary to enable and use all functionalities this rootkit offers. To install all modules at once, just use the `make load` command.
 
-Now the rootkit module has been installed. The fun starts now!
+### Uninstall
+To properly uninstall this rootkit along with the other two kernel modules, use the `make unload` command. Make sure the rootkit module is not hidden when unloading.
 
 ## Rootkit functionalities
 ### Covert communication channel
