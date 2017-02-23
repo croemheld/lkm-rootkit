@@ -19,7 +19,7 @@ struct data_node *find_data_node(struct data_node **head, void *data, int length
 
 		if(!memcmp(data, node->data, length)) {
 
-			debug("[ find_data_node ] DATA_NODE FOUND IN LIST");
+			debug("DATA_NODE FOUND IN LIST");
 
 			return node;
 		}
@@ -38,7 +38,7 @@ struct data_node *find_data_node_field(struct data_node **head, void *needle, in
 
 		if(!memcmp(node->data + offset, needle, length)) {
 
-			debug("[ find_data_node_field ] DATA_NODE FOUND IN LIST");
+			debug("DATA_NODE FOUND IN LIST");
 
 			return node;
 		}
@@ -82,7 +82,7 @@ void delete_data_node(struct data_node **head, struct data_node *node) {
 	/* check for NULL */
 	if(*head == NULL || node == NULL) {
 
-		debug("[ delete_data_node ] DATA_NODE LIST EMPTY");
+		debug("DATA_NODE LIST EMPTY");
 
 		return;
 	}
@@ -90,7 +90,7 @@ void delete_data_node(struct data_node **head, struct data_node *node) {
 	/* node to be deleted is head */
 	if(*head == node) {
 
-		debug("[ delete_data_node ] DATA_NODE IS HEAD")
+		debug("DATA_NODE IS HEAD")
 
 		*head = node->next;	
 	}
@@ -117,14 +117,14 @@ void foreach_data_node_callback(struct data_node **head, void (*callback_functio
 
 	if(is_empty_data_node(head)) {
 
-		debug("[ foreach_data_node_callback ] DATA_NODE LIST EMPTY");
+		debug("DATA_NODE LIST EMPTY");
 
 		return;
 	}
 
 	while(node != NULL) {
 
-		debug("[ foreach_data_node_callback ] CALLBACK FUNCTION CALLED");
+		debug("CALLBACK FUNCTION CALLED");
 
 		callback_function(node);
 
@@ -137,14 +137,14 @@ void free_data_node_list(struct data_node **head) {
 
 	if(is_empty_data_node(head)) {
 
-		debug("[ free_data_node_list ] DATA_NODE LIST EMPTY");
+		debug("DATA_NODE LIST EMPTY");
 
 		return;
 	}
 
 	while(!is_empty_data_node(head)) {
 
-		debug("[ free_data_node_list ] DELETE DATA_NODE");
+		debug("DELETE DATA_NODE");
 
 		delete_data_node(head, *head);
 	}
@@ -155,14 +155,14 @@ void free_data_node_list_callback(struct data_node **head, void (*callback_funct
 
 	if(is_empty_data_node(head)) {
 
-		debug("[ free_data_node_list_callback ] DATA_NODE LIST EMPTY");
+		debug("DATA_NODE LIST EMPTY");
 
 		return;
 	}
 
 	while(!is_empty_data_node(head)) {
 
-		debug("[ free_data_node_list_callback ] CALLBACK FUNCTION CALLED");
+		debug("CALLBACK FUNCTION CALLED");
 
 		/* callback function with param node */
 		callback_function(*head);

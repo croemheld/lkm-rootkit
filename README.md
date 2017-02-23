@@ -40,7 +40,7 @@ To send a command to this rootkit module, enter a valid command from the list of
 The system call table is located at the beginning, reading from the `MSR_LSTAR` register. The address then is stored in an extern pointer which every file can access, if the files includes the `include.h` file. This address is then used to alter specific system call entries, like the `getdents`/`getdents64` function for file hiding.
 
 ### File hiding
-This functionality allows the user to fide files starting with the `rootkit_` and `.rootkit_` prefix. To enable file hiding from your machine, use the covert channel and send the command
+This functionality allows the user to fide files starting with the `rootkit_` and `.rootkit_` prefix. Also, all file descriptors refering to a hidden file will be hidden too but the file is still accesible to those who know that the file is there (i. e. opening the file via terminal is still possible if you know the path to the file). To enable file hiding from your machine, use the covert channel and send the command
 ```
 hidefile
 ```
@@ -60,6 +60,8 @@ to your rootkit via UDP. To show the module again, send
 showmod
 ```
 > Note: The module has to be visible (i. e. not hidden) when unloading.
+
+In the future it should be able to hide any module by passing the name as a param to the `hidemod` command.
 
 ### Network keylogging
 > Note: This functionality requires a syslog-ng server on the users machine. The destination port for receiving keylogger data is `514`, which can also be changed in the `include.h` on line 29 (`SYS_PORT`).
@@ -137,3 +139,6 @@ showsocket-udp6-12346
 showsocket-tcp4-12347
 showsocket-tcp6-12348
 ```
+
+## Contributing
+Any contributions and ideas are welcome. For questions please contact me at roemheld@in.tum.de.

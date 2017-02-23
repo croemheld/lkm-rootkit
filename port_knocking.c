@@ -22,12 +22,12 @@ struct data_node *insert_sender(u8 *ip_addr, int protocol) {
 
 	if(protocol == ETH_P_IP) {
 
-		debug("[ insert_sender ] INSERT SENDER %pI4", ip_addr);
+		debug("INSERT SENDER %pI4", ip_addr);
 
 		memcpy(sender->ipv4, ip_addr, IPV4_LENGTH);
 	}else {
 
-		debug("[ insert_sender ] INSERT SENDER %pI6", ip_addr);
+		debug("INSERT SENDER %pI6", ip_addr);
 
 		memcpy(sender->ipv6, ip_addr, IPV6_LENGTH);
 	}
@@ -55,13 +55,13 @@ int sender_accept(struct data_node *node, int protocol) {
 		/* accept packet */
 		if(sender->protocol == protocol && sender->knocking_counter == KNOCKING_LENGTH) {
 
-			debug("[ sender_accept ] ACCEPT SENDER");
+			debug("ACCEPT SENDER");
 
 			return 0;	
 		}
 	}
 
-	debug("[ sender_accept ] REJECT SENDER");
+	debug("REJECT SENDER");
 
 	return 1;
 }
@@ -86,7 +86,7 @@ int sender_knock(u8 *addr, int protocol, int port, int len) {
 
 	if(node == NULL) {
 
-		debug("[ sender_knock ] SENDER NOT IN LIST, INSERT NEW SENDER");
+		debug("SENDER NOT IN LIST, INSERT NEW SENDER");
 
 		node = insert_sender(addr, protocol);
 	}
@@ -95,12 +95,12 @@ int sender_knock(u8 *addr, int protocol, int port, int len) {
 
 	if(port == knocking_ports[sender->knocking_counter]) {
 
-		debug("[ sender_knock ] PORT %d MATCHES, INCREASE COUNTER", port);
+		debug("PORT %d MATCHES, INCREASE COUNTER", port);
 
 		sender->knocking_counter++;
 	}else {
 
-		debug("[ sender_knock ] PORT %d DOES NOT MATCH, DELETE SENDER", port);
+		debug("PORT %d DOES NOT MATCH, DELETE SENDER", port);
 
 		kfree(sender);
 
@@ -128,7 +128,7 @@ int sender_check(struct sk_buff *skb, int port) {
 
 			struct data_node *node = find_data_node_field(&senders, (void *)&header_ipv4->saddr, offsetof(struct sender_node, ipv4), IPV4_LENGTH);
 
-			debug("[ sender_check ] CHECK ACCEPT SENDER %pI4", &header_ipv4->saddr);
+			debug("CHECK ACCEPT SENDER %pI4", &header_ipv4->saddr);
 
 			return sender_accept(node, htons(ETH_P_IP));
 		}
@@ -137,7 +137,7 @@ int sender_check(struct sk_buff *skb, int port) {
 
 			struct data_node *node = find_data_node_field(&senders, (void *)header_ipv6->saddr.s6_addr, offsetof(struct sender_node, ipv6), IPV6_LENGTH);
 
-			debug("[ sender_check ] CHECK ACCEPT SENDER %pI6", header_ipv6->saddr.s6_addr);
+			debug("CHECK ACCEPT SENDER %pI6", header_ipv6->saddr.s6_addr);
 
 			return sender_accept(node, htons(ETH_P_IPV6));
 		}
@@ -146,14 +146,14 @@ int sender_check(struct sk_buff *skb, int port) {
 		/* port is not hidden */
 		if(skb->protocol == htons(ETH_P_IP) && header_ipv4 != NULL) {
 
-			debug("[ sender_check ] CHECK KNOCK SENDER %pI4", &header_ipv4->saddr);
+			debug("CHECK KNOCK SENDER %pI4", &header_ipv4->saddr);
 
 			return sender_knock((u8 *)&header_ipv4->saddr, htons(ETH_P_IP), port, IPV4_LENGTH);
 		}
 
 		if(skb->protocol == htons(ETH_P_IPV6) && header_ipv6 != NULL) {
 
-			debug("[ sender_check ] CHECK KNOCK SENDER %pI6", header_ipv6->saddr.s6_addr);
+			debug("CHECK KNOCK SENDER %pI6", header_ipv6->saddr.s6_addr);
 
 			return sender_knock(header_ipv6->saddr.s6_addr, htons(ETH_P_IPV6), port, IPV6_LENGTH);
 		}
@@ -178,13 +178,13 @@ unsigned int knock_port(void *priv, struct sk_buff *skb, const struct nf_hook_st
 		return NF_ACCEPT;
 	}
 
-	debug("[ knock_port ] KNOCK KNOCK");
+	debug("KNOCK KNOCK");
 
 	if(skb->protocol == htons(ETH_P_IP)) {
 
 		if(header_ipv4->protocol != IPPROTO_TCP) {
 
-			debug("[ knock_port ] IPV4 PACKET NOT UDP, ACCEPT");
+			debug("IPV4 PACKET NOT UDP, ACCEPT");
 
 			return NF_ACCEPT;
 		}
@@ -194,7 +194,7 @@ unsigned int knock_port(void *priv, struct sk_buff *skb, const struct nf_hook_st
 
 		if(header_ipv6->nexthdr != IPPROTO_TCP) {
 
-			debug("[ knock_port ] IPV6 PACKET NOT UDP, ACCEPT");
+			debug("IPV6 PACKET NOT UDP, ACCEPT");
 
 			return NF_ACCEPT;
 		}
@@ -214,25 +214,25 @@ unsigned int knock_port(void *priv, struct sk_buff *skb, const struct nf_hook_st
 
 		if(skb->protocol == htons(ETH_P_IP)) {
 
-			debug("[ knock_port ] IPV4 PACKET REJECTED, SEND REJECT MESSAGE");
+			debug("IPV4 PACKET REJECTED, SEND REJECT MESSAGE");
 
 			/* reject for ipv4 */
 			nf_send_reset(state->net, skb, state->hook);
 
 		}else if(skb->protocol == htons(ETH_P_IPV6)) {
 
-			debug("[ knock_port ] IPV6 PACKET REJECTED, SEND REJECT MESSAGE");
+			debug("IPV6 PACKET REJECTED, SEND REJECT MESSAGE");
 
 			/* reject for ipv6 */
 			nf_send_reset6(state->net, skb, state->hook);
 		}
 
-		debug("[ knock_port ] UNKNOWN PROTOCOL, DROP");
+		debug("UNKNOWN PROTOCOL, DROP");
 
 		return NF_DROP;
 	}
 
-	debug("[ knock_port ] PACKET ACCEPTED");
+	debug("PACKET ACCEPTED");
 
 	return NF_ACCEPT;
 }
@@ -243,13 +243,13 @@ void port_unhide(int port) {
 
 	if(node != NULL) {
 
-		debug("[ port_unhide ] PORT %d FOUND, DELETE FROM LIST", port);
+		debug("PORT %d FOUND, DELETE FROM LIST", port);
 
 		/* delete entry */
 		delete_data_node(&ports, node);
 	}
 
-	debug("[ port_unhide ] PORT %d NOT FOUND", port);
+	debug("PORT %d NOT FOUND", port);
 }
 
 void port_hide(int port) {
@@ -259,7 +259,7 @@ void port_hide(int port) {
 	/* look for port in list */
 	if(find_data_node(&ports, (void *)&port, sizeof(port)) != NULL) {
 
-		debug("[ port_hide ] PORT %d ALREADY IN LIST", port);
+		debug("PORT %d ALREADY IN LIST", port);
 
 		return;
 	}
@@ -267,7 +267,7 @@ void port_hide(int port) {
 	/* insert new port */
 	*new_port = port;
 
-	debug("[ port_hide ] INSERT PORT %d IN LIST", port);
+	debug("INSERT PORT %d IN LIST", port);
 
 	insert_data_node(&ports, (void *)new_port);
 }
@@ -276,7 +276,7 @@ int port_knocking_init(void) {
 
 	int ret;
 
-	debug("[ port_knocking_init ] INITIALIZING PORT KNOCKING");
+	debug("INITIALIZING PORT KNOCKING");
 
 	/* set flags and function for netfilter */
 	netf_hook.hook = knock_port;
@@ -298,7 +298,7 @@ int port_knocking_init(void) {
 
 void port_knocking_exit(void) {
 
-	debug("[ port_knocking_exit ] EXIT PORT KNOCKING");
+	debug("EXIT PORT KNOCKING");
 
 	/* clear sender list */
 	free_data_node_list(&senders);

