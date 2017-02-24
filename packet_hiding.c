@@ -4,31 +4,6 @@
 /*
  * explanation of code:
  *
- * "The basic operation of  function  hijacking  is that  if we
- * know the  address of a kernel  function,  even one that's not
- * exported, we can  redirect that function to  another location
- * before  we allow  the real code to run.  To do this we  first
- * save  so  many of the  original  instruction  bytes from  the
- * beginning of the  function and replace them with  instruction
- * bytes that perform an absolute jump to our own code.  Example
- * i386 assembler to do this is given here:
- * 
- * 	movl  (address of our function),  %eax
- * 	jmp   *eax
- * 
- * The generated hex bytes of these instructions (substituting
- * zero as our function address) are:
- * 
- *  0xb8 0x00 0x00 0x00 0x00
- *  0xff 0xe0
- * 
- * If in the  initialisation of an LKM we  change the function
- * address  of  zero  in  the  code  above to  that of our  hook
- * function, we can make our hook function run first.  When (if)
- * we want to run  the original  function we simply  restore the
- * original bytes at the  beginning, call the function  and then
- * replace  our  hijacking code."
- *
  * source: http://phrack.org/issues/61/13.html
  *
  * since the hex code of the instructions only works in x86, we
@@ -45,9 +20,6 @@
  *
  * which generates the byte code
  *
- *                   8 bytes for x64 address
- *             __________________^__________________
- *            /                                     \
  *	0x48 0xb8 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
  *  0x50
  *	0xc3

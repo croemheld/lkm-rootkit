@@ -48,10 +48,10 @@
 
 /* struct for our kthread */
 struct kthread_t {
-    struct task_struct *thread;
-    struct socket *sock;
-    struct sockaddr_in addr;
-    int running;
+	struct task_struct *thread;
+	struct socket *sock;
+	struct sockaddr_in addr;
+	int running;
 };
 
 int udp_server_send(struct socket *sock, struct sockaddr_in *addr, unsigned char *buf, int len);

