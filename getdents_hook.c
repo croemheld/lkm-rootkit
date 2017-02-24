@@ -136,6 +136,7 @@ void hash_task(struct task_struct *task) {
 
 		/* insert entry */
 		if(upid->pid_chain.next) {
+
 			*upid->pid_chain.next->pprev = &upid->pid_chain;
 		}
 
@@ -165,6 +166,7 @@ void unhash_task(struct task_struct *task) {
 
 		/* remove entry */
 		if(upid->pid_chain.next) {
+			
 			upid->pid_chain.next->pprev = upid->pid_chain.pprev;
 		}
 

