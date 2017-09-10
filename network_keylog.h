@@ -1,5 +1,5 @@
-#ifndef KEYLOGGER
-#define KEYLOGGER
+#ifndef KEYLOG_H
+#define KEYLOG_H
 
 #include "include.h"
 
