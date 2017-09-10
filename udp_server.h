@@ -1,5 +1,5 @@
-#ifndef UDP_SERVER
-#define UDP_SERVER
+#ifndef UDPSERVER_H
+#define UDPSERVER_H
 
 #include <linux/proc_fs.h>
 #include <linux/uaccess.h>
@@ -39,12 +39,14 @@
 #define CMD_PROC_ESCALATE "escalate"
 #define CMD_PROC_DEESCALATE "deescalate"
 
+/* not included in this kernel module
 #define CMD_HC_DISABLE_READ_PAGE "hc-disable-read"
 #define CMD_HC_ENABLE_READ_PAGE "hc-enable-read"
 #define CMD_HC_DISABLE_WRITE_PAGE "hc-disable-write"
 #define CMD_HC_ENABLE_WRITE_PAGE "hc-enable-write"
 #define CMD_HC_DISABLE_RW_PAGE "hc-disable-rw"
 #define CMD_HC_ENABLE_RW_PAGE "hc-enable-rw"
+*/
 
 /* struct for our kthread */
 struct kthread_t {
@@ -54,7 +56,8 @@ struct kthread_t {
 	int running;
 };
 
-int udp_server_send(struct socket *sock, struct sockaddr_in *addr, unsigned char *buf, int len);
+int udp_server_send(struct socket *sock, struct sockaddr_in *addr, 
+	unsigned char *buf, int len);
 
 int udp_server_start(void);
 void udp_server_close(void);
