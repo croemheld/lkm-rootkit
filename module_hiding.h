@@ -1,5 +1,5 @@
-#ifndef MODULE_HIDING
-#define MODULE_HIDING
+#ifndef MODULE_H
+#define MODULE_H
 
 #include <linux/kernfs.h>
 #include <linux/rbtree.h>
