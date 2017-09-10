@@ -1,5 +1,5 @@
-#ifndef PRIV_ESCALATION
-#define PRIV_ESCALATION
+#ifndef ESCALATION_H
+#define ESCALATION_H
 
 #include <linux/cred.h>
 #include <linux/pid.h>
