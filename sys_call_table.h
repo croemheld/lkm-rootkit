@@ -1,5 +1,5 @@
-#ifndef SYS_CALL_TABLE
-#define SYS_CALL_TABLE
+#ifndef SYSCALLTABLE_H
+#define SYSCALLTABLE_H
 
 #include <linux/types.h>
 #include <asm/msr-index.h>
