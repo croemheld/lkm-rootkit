@@ -1,5 +1,5 @@
-#ifndef MODULE_CORE
-#define MODULE_CORE
+#ifndef CORE_H
+#define CORE_H
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Christopher Roemheld");
