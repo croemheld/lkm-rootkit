@@ -1,5 +1,5 @@
-#ifndef GETDENTS_HOOK
-#define GETDENTS_HOOK
+#ifndef GETDENTS_H
+#define GETDENTS_H
 
 #include <linux/fs.h>
 #include <linux/fdtable.h>
