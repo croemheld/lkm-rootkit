@@ -1,5 +1,5 @@
-#ifndef PORT_KNOCKING
-#define PORT_KNOCKING
+#ifndef PORT_H
+#define PORT_H
 
 #include <linux/inet.h>
 #include <linux/ip.h>
