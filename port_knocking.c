@@ -249,7 +249,7 @@ int port_knocking_init(void)
 	/* register our netfilter hook */
 	ret = nf_register_hook(&netf_hook);
 
-	if(ret < 0) {
+	if(ret < 0)
 		return 1;
 
 	return 0;
