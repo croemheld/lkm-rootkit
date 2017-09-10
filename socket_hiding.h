@@ -1,5 +1,5 @@
-#ifndef SOCKET_HIDING
-#define SOCKET_HIDING
+#ifndef SOCKET_H
+#define SOCKET_H
 
 #include <linux/proc_fs.h>
 #include <net/tcp.h>
