@@ -1,6 +1,8 @@
 # rootkit-kernel-module
 A linux kernel module for hooking and exploiting kernel functions and user data.
 
+> **Note**: This loadable kernel module was developed using linux kernel version *4.4.13*. Should you have problems compiling this module, please check for your kernel version first.
+
 ### Rootkit functionalities:
 - [Covert communication channel](#covert-communication-channel)
 - [System call table hook](#system-call-table-hook)
@@ -59,12 +61,12 @@ to your rootkit via UDP. To show the module again, send
 ```
 showmod
 ```
-> Note: The module has to be visible (i. e. not hidden) when unloading.
+> **Note**: The module has to be visible (i. e. not hidden) when unloading.
 
 In the future it should be able to hide any module by passing the name as a param to the `hidemod` command.
 
 ### Network keylogging
-> Note: This functionality requires a syslog-ng server on the users machine. The destination port for receiving keylogger data is `514`, which can also be changed in the `include.h` on line 29 (`SYS_PORT`).
+> **Note**: This functionality requires a syslog-ng server on the users machine. The destination port for receiving keylogger data is `514`, which can also be changed in the `include.h` on line 29 (`SYS_PORT`).
 
 When enabling the keylogger with
 ```
@@ -109,7 +111,7 @@ showport-12345
 ```
 
 ### Privilege escalation
-> Note: This functionality is still buggy. Please be careful with your machine when escalating a process.
+> **Note**: This functionality is still buggy. Please be careful with your machine when escalating a process.
 
 Escalating a process privileges to root and also make this process adopted by the init process. To escalate a process to root, send the command `escalate` along with the PID of the process to your rootkit:
 ```
@@ -121,7 +123,7 @@ To deescalate a process to its original privileges, send
 ```
 deescalate-12345
 ```
-> Note: You can only deescalate processes you have escalated before.
+> **Note**: You can only deescalate processes you have escalated before.
 
 ### Socket hiding
 To hide a socket you need to specify a transportation protocol and a port (similar to the [packet hiding](#ipv4ipv6-packet-hiding) functionality). The supported protocols are the same (`udp4`, `udp6`, `tcp4`, `tcp6`). For example:
