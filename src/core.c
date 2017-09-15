@@ -20,7 +20,7 @@ int init_module(void)
 	}
 
 	/* set sys call table pointer */
-	if(set_sys_call_table()) {
+	if(set_syscalltable()) {
 		alert("Error on set_sys_call_table\n");
 		return -EINVAL;
 	}

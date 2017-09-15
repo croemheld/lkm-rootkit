@@ -4,6 +4,6 @@
 #include <linux/types.h>
 #include <asm/msr-index.h>
 
-unsigned long **get_sys_call_table(void);
+unsigned long **get_syscalltable(void);
 
 #endif

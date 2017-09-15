@@ -1,9 +1,10 @@
+#include "utils.h"
 #include "syscalltable.h"
 
 /*
  * from: http://bw0x00.blogspot.de/2011/03/find-syscalltable-in-linux-26.html
  */
-unsigned long **get_sys_call_table(void)
+unsigned long **get_syscalltable(void)
 {
 	int i, lo, hi;
 	unsigned char *ptr;

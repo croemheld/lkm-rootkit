@@ -117,7 +117,7 @@ void disable_page_protection(void);
 void enable_page_protection(void);
 
 /* set pointer to system call table */
-int set_sys_call_table(void);
+int set_syscalltable(void);
 
 /* strtoint: convert char *str containing a number into an integer */
 int strtoint(char *str);

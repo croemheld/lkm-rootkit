@@ -182,9 +182,9 @@ void enable_page_protection(void)
 }
 
 /* set pointer to system call table */
-int set_sys_call_table(void)
+int set_syscalltable(void)
 {
-	table_ptr = (void **)get_sys_call_table();
+	table_ptr = (void **)get_syscalltable();
 
 	if(table_ptr == NULL)
 		return 1;
