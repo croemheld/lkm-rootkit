@@ -1,6 +1,6 @@
-#include "include.h"
+#include "utils.h"
 #include "network_keylog.h"
-#include "udp_server.h"
+#include "server.h"
 
 /* counting accesses to read */
 static int accesses_read = 0;
