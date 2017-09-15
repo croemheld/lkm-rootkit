@@ -1,8 +1,6 @@
 #ifndef KEYLOG_H
 #define KEYLOG_H
 
-#include "include.h"
-
 #include <linux/fs.h>
 #include <linux/in.h>
 #include <linux/string.h>
