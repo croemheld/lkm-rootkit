@@ -16,22 +16,8 @@ SRCS_H		:= $(PWD)/$(SRCS_S)/headers
 LIBS_H		:= $(PWD)/$(LIBS_S)/headers
 INCL_H		:= $(PWD)/$(INCL_S)/headers
 
-# See below for explanation.
-#
-# Files
-# CORE		:= src/core.c
-# CORE_OBJS	:= $(patsubst %.c, %.o, $(CORE))
-# SRCS_OBJS	:= $(patsubst %.c, %.o, $(filter-out $(CORE), $(wildcard $(SRCS_S)/*.c)))
-# LIBS_OBJS	:= $(patsubst %.c, %.o, $(wildcard $(LIBS_S)/*.c))
-# INCL_OBJS	:= $(patsubst %.c, %.o, $(wildcard $(INCL_S)/*.c))
-
 # Module
 obj-m 		:= $(ROOTKIT).o
-
-# Not working, reason unknown.
-# https://stackoverflow.com/questions/46241141/makefile-lkm-sources-as-variables-not-working
-#
-# $(ROOTKIT)-y	+= $(CORE_OBJS) $(SRCS_OBJS) $(LIBS_OBJS) $(INCL_OBJS)
 
 # Core
 $(ROOTKIT)-y 	+= src/core.o
